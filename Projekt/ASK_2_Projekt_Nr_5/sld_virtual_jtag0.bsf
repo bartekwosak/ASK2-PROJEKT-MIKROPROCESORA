@@ -1,0 +1,127 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2010 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 0 0 248 254)
+	(text "sld_virtual_jtag0" (rect 78 0 186 16)(font "Arial" (font_size 10)))
+	(text "inst" (rect 8 238 25 250)(font "Arial" ))
+	(port
+		(pt 0 48)
+		(input)
+		(text "tdo" (rect 0 0 17 14)(font "Arial" (font_size 8)))
+		(text "tdo" (rect 20 42 35 55)(font "Arial" (font_size 8)))
+		(line (pt 0 48)(pt 16 48)(line_width 1))
+	)
+	(port
+		(pt 0 72)
+		(input)
+		(text "ir_out[0]" (rect 0 0 46 14)(font "Arial" (font_size 8)))
+		(text "ir_out[0]" (rect 20 66 59 79)(font "Arial" (font_size 8)))
+		(line (pt 0 72)(pt 16 72)(line_width 3))
+	)
+	(port
+		(pt 248 40)
+		(output)
+		(text "tck" (rect 0 0 16 14)(font "Arial" (font_size 8)))
+		(text "tck" (rect 215 34 227 47)(font "Arial" (font_size 8)))
+		(line (pt 248 40)(pt 232 40)(line_width 1))
+	)
+	(port
+		(pt 248 56)
+		(output)
+		(text "tdi" (rect 0 0 12 14)(font "Arial" (font_size 8)))
+		(text "tdi" (rect 218 50 230 63)(font "Arial" (font_size 8)))
+		(line (pt 248 56)(pt 232 56)(line_width 1))
+	)
+	(port
+		(pt 248 72)
+		(output)
+		(text "ir_in[0]" (rect 0 0 37 14)(font "Arial" (font_size 8)))
+		(text "ir_in[0]" (rect 197 66 230 79)(font "Arial" (font_size 8)))
+		(line (pt 248 72)(pt 232 72)(line_width 3))
+	)
+	(port
+		(pt 248 88)
+		(output)
+		(text "virtual_state_cdr" (rect 0 0 95 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_cdr" (rect 148 82 225 95)(font "Arial" (font_size 8)))
+		(line (pt 248 88)(pt 232 88)(line_width 1))
+	)
+	(port
+		(pt 248 104)
+		(output)
+		(text "virtual_state_sdr" (rect 0 0 95 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_sdr" (rect 148 98 224 111)(font "Arial" (font_size 8)))
+		(line (pt 248 104)(pt 232 104)(line_width 1))
+	)
+	(port
+		(pt 248 120)
+		(output)
+		(text "virtual_state_e1dr" (rect 0 0 102 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_e1dr" (rect 142 114 226 127)(font "Arial" (font_size 8)))
+		(line (pt 248 120)(pt 232 120)(line_width 1))
+	)
+	(port
+		(pt 248 136)
+		(output)
+		(text "virtual_state_pdr" (rect 0 0 95 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_pdr" (rect 148 130 226 143)(font "Arial" (font_size 8)))
+		(line (pt 248 136)(pt 232 136)(line_width 1))
+	)
+	(port
+		(pt 248 152)
+		(output)
+		(text "virtual_state_e2dr" (rect 0 0 102 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_e2dr" (rect 142 146 226 159)(font "Arial" (font_size 8)))
+		(line (pt 248 152)(pt 232 152)(line_width 1))
+	)
+	(port
+		(pt 248 168)
+		(output)
+		(text "virtual_state_udr" (rect 0 0 95 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_udr" (rect 148 162 226 175)(font "Arial" (font_size 8)))
+		(line (pt 248 168)(pt 232 168)(line_width 1))
+	)
+	(port
+		(pt 248 184)
+		(output)
+		(text "virtual_state_cir" (rect 0 0 90 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_cir" (rect 152 178 226 191)(font "Arial" (font_size 8)))
+		(line (pt 248 184)(pt 232 184)(line_width 1))
+	)
+	(port
+		(pt 248 200)
+		(output)
+		(text "virtual_state_uir" (rect 0 0 90 14)(font "Arial" (font_size 8)))
+		(text "virtual_state_uir" (rect 152 194 227 207)(font "Arial" (font_size 8)))
+		(line (pt 248 200)(pt 232 200)(line_width 1))
+	)
+	(drawing
+		(line (pt 0 0)(pt 249 0)(line_width 1))
+		(line (pt 249 0)(pt 249 255)(line_width 1))
+		(line (pt 0 255)(pt 249 255)(line_width 1))
+		(line (pt 0 0)(pt 0 255)(line_width 1))
+		(line (pt 16 24)(pt 235 24)(line_width 1))
+		(line (pt 235 24)(pt 235 233)(line_width 1))
+		(line (pt 16 233)(pt 235 233)(line_width 1))
+		(line (pt 16 24)(pt 16 233)(line_width 1))
+	)
+)

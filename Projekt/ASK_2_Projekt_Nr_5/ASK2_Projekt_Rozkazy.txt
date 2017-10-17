@@ -1,0 +1,285 @@
+Projekt: Architektura Systemów Komputerowych 2
+Grupa: 2ID15
+Zespół: Bartłomiej Osak, Tomasz Pasternak, Monika Molenda 
+Temat: 5
+
+Polecenie: 
+Wykonać projekt mikroprocesora oraz układów towarzyszących zgodnie z przedstawionymi we wstępie do instrukcji specyfikacją i ograniczeniami. Ponadto mikroprocesor musi:
+
+	-mieć możliwość zaadresowania 4096 słów pamięci operacyjnej,
+	-wspierać adresowania: domyślne, natychmiastowe, indeksowe,
+	-wspierać segmentację pamięci z podziałem na segment kodu programu i segment danych,
+	-posiadać odpowiednią liczbę rejestrów segmentowych,
+	-posiadać rejestr licznika rozkazów (tylko do odczytu),
+	-posiadać 4 rejestry uniwersalne,
+
+	-wykonywać rozkazy:
+	-przesyłanie danych rej-nat, rej-rej, rej-pam,
+	-dodawanie/odejmowanie rej-nat, rej-rej,
+	-blokowe przesyłanie danych w pamięci z użyciem licznika powtórzeń,
+	-porównywanie rej-rej,
+	-wykonywanie skoku bezwarunkowego do adresu podanego jako liczba lub rejestr,
+	-wykonywanie skoków warunkowych gdy większe, mniejsze, równe,
+	-wyliczanie wartości funkcji logicznych dla rej-nat, rej-rej.
+
+Podstawową długością słowa mikroprocesora jest 8 bitów. Rejestr znaczników musi być aktualizowany po wykonaniu odpowiednik rozkazów. Słowo rozkazu mikroprocesora MUSI posiadać zmienną długość. Długość słowa na magistrali danych mikroprocesora ma wynosić 8 bitów. W pamięci należy przygotować program, który będzie demonstrował możliwości mikroprocesora (treść pseudokodu wraz z treścią assemblera należy zamieścić w sprawozdaniu). 
+
+###############################################################################################################
+
+#### Segment i Offset #####
+
+4096 = 2^12
+Słowo procesora: 8 bitów
+
+[---- ----] [---- ----]
+  Segment      Offset
+
+[xxxx ----] [---- ----]
+  Segment 		Offset
+
+ Segment: 4b
+ Offset: 8b 
+ 4b+8b=12b
+
+ #### Rejestry ####
+
+ Rejestry uniwersalne: R0, R1, R2, R3
+ Rejestry segmentowe: CS, DS, SS
+ Rejestr flag: [FLAGS]
+ Inne rejestry:
+ SI, BUF1, BUF2, SP
+
+8 > 2^3 -> [---]
+
+#### Rozkazy ####
+
+nop
+mov rej nat
+mov rej rej
+mov rej DS:[si]
+
+add rej rej
+add rej nat
+
+sub rej rej
+sub rej nat
+
+cmp rej rej
+
+jmp CS:[nat]
+
+jg CS:[nat]
+jl CS:[nat]
+je CS:[nat]
+
+
+and rej nat
+and rej rej
+or rej nat
+or rej rej
+xor rej nat
+xor rej rej
+
+//
+Oznaczenia: rrr - kod rejestru, ooooo - kod rozkazu
+[---o oooo] - rozkaz bez argumentów (nop)
+[rrro oooo] - rozkaz z argumentem rej (jmp, not)
+[rrr- ----][rrro oooo] - rozkaz z argumentami rej-rej (mov,add,sub, cmp, and,or,xor)
+[nnnn nnnn][rrro oooo] - rozkaz z argumentami rej-nat (mov,add,sub,and,or,xor)
+[nnnn nnnn][---o oooo] - rozkaz z argumentem nat (jmp,jg,jl,je)
+
+#### ALU ####
+
+[000] ADD
+[001] SUB
+[010] CMP 
+[011] AND
+[100] OR
+[101] XOR
+[110] ARG1
+[111] ARG2
+
+#### FLAGS [7...0] ####
+
+[EGLO xxxx]
+
+Equals - 'E'
+Greater - 'G'
+Less -'L'
+Overflow - 'O'
+
+
+#### BANK REJESTRÓW ####
+
+[00] - R0
+[01] - R1
+[10] - R2
+[11] - R3
+
+#### SYGNAŁY STERUJĄCE ####
+
+~q[0] - zapis wartości ACC_ALU 
+~q[1] - zapis wartości rejestru flag
+~q[5..2] - kod operacji ALU
+~q[6] - sterowanie MUX (za ACC_NAT)
+~q[7] - zapis wartosci ACC_NAT
+~q[8] - zapis wartosci Bank_rejestrów
+~q[10..9] - kod rejestru 2 w Bank_rejestrow
+~q[12..11] - kod rejestru 1 w Bank_rejestrow
+~q[13] - wejście układu wykonawczego (0 - wejście, 1 - wynik ALU)
+
+#### ZAŁOŻENIA DLA KONTROLERA ####
+
+Sygnały 1b: ADR0, ADR3
+Sygnały 2b: ADR1, ADR2
+Sygnały 4b: ADR4
+Sygnały ładowania rejestrów: L_R0, L_R1, L_R2, L_R3, L_ACCnat, L_ACCalu, L_flags
+
+#### MIKROINSTRUKCJE ####
+
+a) Operacje na rejestrach:
+
+-1. Ładowanie wartości natychmiastowej do akumulatora wartości natychmiastowej: ACC_NAT = [nat8].
+0. Ładowanie wartości z wejścia do rejestrów: Ri = WE, gdzie i=0,1,2,3.
+1. Przesyłanie wartości rejestru na wyjście: WY = Ri, gdzie i=0,1,2,3.
+2. Dodawanie wartości dwóch rejestrów (zapis wyniku do rejestru): R2=R0+R1.
+3. Dodawanie wartości dwóch rejestrów (wynik na wyjściu): WY = R0+R1.
+4. Odejmowanie wartości dwóch rejestrów (zapis wyniku do rejestru): R2=R0-R1.
+5. Odejmowanie wartości dwóch rejestrów (wynik na wyjściu): WY = R0-R1.
+6. Porównywanie wartości dwóch rejestrów (wynik do flags): R0 cmp R1.
+7. Iloczyn logiczny dwóch rejestrów (zapis wyniku do rejestru): R2=R0 and R1.
+8. Iloczyn logiczny dwóch rejestrów (wynik na wyjście): WY = R0 and R1.
+9. Suma logiczna dwóch rejestrów (zapis wyniku do rejestru): R2=R0 or R1.
+10. Suma logiczna dwóch rejestrów (wynik na wyjście): WY=R0 or R1.
+11. Różnica symetryczna dwóch rejestrów (zapis wyniku do rejestru): R2 = R0 xor R1.
+12. Różnica symetryczna dwóch rejestrów (wynik na wyjście): WY = R0 xor R1.
+13. Przesyłanie z rejestru do rejestru: R0 = R1.
+
+b) Operacje na wartości natychmiastowej:
+
+14. Dodawanie wartości rejestru i wartości natychmiastowej (zapis wyniku do rejestru): R2=R0+[nat8].
+15. Dodawanie wartości rejestru i wartości natychmiastowej (wynik na wyjściu): WY=R0+[nat8].
+16. Odejmowanie wartości rejestru i wartości natychmiastowej (zapis wyniku do rejestru): R3=R2-[nat8].
+17. Odejmowanie wartości rejestru i wartości natychmiastowej (wynik na wyjściu): WY=R2-[nat8].
+18. Iloczyn logiczny wartości rejestru i wartości natychmiastowej (zapis wyniku do rejestru): R2=R0 and [nat8].
+19. Iloczyn logiczny wartości rejestru i wartości natychmiastowej (wynik na wyjściu): WY=R0 and [nat8].
+20. Suma logiczna wartości rejestru i wartości natychmiastowej (zapis wyniku do rejestru): R2=R0 or [nat8].
+21. Suma logiczna wartości rejestru i wartości natychmiastowej (wynik na wyjściu): WY=R0 or [nat8].
+22. Różnica symetryczna wartości rejestru i wartości natychmiastowej (zapis wyniku do rejestru): R3=R1 xor [nat8].
+23. Różnica symetryczna wartości rejestru i wartości natychmiastowej (wynik na wyjściu): WY=R1 xor [nat8].
+24. Przesyłanie [nat8] do rejestru: R0 = [nat8].
+
+
+#### MIKROINSTRUKCJE - ROZPISANIE ####
+-1. ACC_NAT = WE
+
+t0: ADR0=0, LD_ACC_NAT=1.
+
+0. Ri = WE, i=0,1,2,3.
+
+t0: ADR0=0, ADR1_1=a, LD_Ri=1.
+
+1. WY = Ri, i=0,1,2,3.
+
+t0: ADR1_2=a, ADR4=8, LD_ALU_ACC=1.
+
+2. R2=R0+R1.
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=0, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+3. WY= R0+R1
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=0, LD_ALU_ACC=1.
+
+4. R2=R0-R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=2, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+5. WY= R0-R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=2, LD_ALU_ACC=1.
+
+6. R0 cmp R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0,LD_flags=1.
+
+7. R2=R0 and R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=5, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+8. WY=R0 and R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=5, LD_ALU_ACC=1.
+
+9. R2=R0 or R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=6, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+10. WY=R0 or R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=6, LD_ALU_ACC=1.
+
+11. R2=R0 xor R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=7, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+12. WY=R0 xor R1
+
+t0: ADR1_2=0, ADR2=1, ADR3=0, ADR4=7, LD_ALU_ACC=1.
+
+13. R0=R1
+
+t0: ADR1_2=1, ADR4=8, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=0, LD_R0=1.
+
+14. R2=R0+[nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=0, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+15. WY=R0+[nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=0, LD_ALU_ACC=1.
+
+16. R2=R0-[nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=2, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+17. WY=R0-[nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=2, LD_ALU_ACC=1.
+
+18. R2=R0 and [nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=5, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+19. WY=R0 and [nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=5, LD_ALU_ACC=1.
+
+20. R2=R0 or [nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=6, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+21. WY=R0 or [nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=6, LD_ALU_ACC=1.
+
+22. R2=R0 xor [nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=7, LD_ALU_ACC=1.
+t1: ADR0=1, ADR1_1=2, LD_R2=1.
+
+23. WY=R0 xor [nat8]
+
+t0: ADR1_2=0, ADR3=1, ADR4=7, LD_ALU_ACC=1.
+
+
+

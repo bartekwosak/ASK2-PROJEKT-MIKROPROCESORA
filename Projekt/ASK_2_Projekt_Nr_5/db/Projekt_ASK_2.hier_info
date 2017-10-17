@@ -1,0 +1,6 @@
+|Projekt_ASK_2
+pin_name <= <GND>
+clk => ~NO_FANOUT~
+reset => ~NO_FANOUT~
+
+

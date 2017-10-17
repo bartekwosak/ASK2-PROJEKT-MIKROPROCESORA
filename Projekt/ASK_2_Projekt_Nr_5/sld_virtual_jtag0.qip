@@ -1,0 +1,5 @@
+set_global_assignment -name IP_TOOL_NAME "Virtual JTAG"
+set_global_assignment -name IP_TOOL_VERSION "9.1"
+set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) "sld_virtual_jtag0.tdf"]
+set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) "sld_virtual_jtag0.bsf"]
+set_global_assignment -name MISC_FILE [file join $::quartus(qip_path) "sld_virtual_jtag0.inc"]
